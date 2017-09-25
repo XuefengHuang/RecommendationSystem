@@ -143,6 +143,60 @@ GET: /<int:user_id>/ratings/<string:book_id> 获取该用户对某个图书的�
 POST: /<int:user_id>/ratings 新增图书评价信息
 ```
 
+* 7. 接口调用示例：
+
+
+```
+GET: /276729/ratings/top/3 获取用户ID为276729的图书推荐top3信息
+返回信息：
+
+[
+  {
+    "Count": 30,
+    "Rating": 8.781754720405482,
+    "Author": "MARJANE SATRAPI",
+    "URL": "http://images.amazon.com/images/P/0375422307.01.THUMBZZZ.jpg",
+    "Publisher": "Pantheon",
+    "Title": "Persepolis : The Story of a Childhood (Alex Awards (Awards))",
+    "Year": "2003"
+  },
+  {
+    "Count": 31,
+    "Rating": 7.093566643463471,
+    "Author": "Stephen King",
+    "URL": "http://images.amazon.com/images/P/067081458X.01.THUMBZZZ.jpg",
+    "Publisher": "Viking Books",
+    "Title": "The Eyes of the Dragon",
+    "Year": "1987"
+  },
+  {
+    "Count": 25,
+    "Rating": 7.069147186199548,
+    "Author": "Jean Sasson",
+    "URL": "http://images.amazon.com/images/P/0967673747.01.THUMBZZZ.jpg",
+    "Publisher": "Windsor-Brooke Books",
+    "Title": "Princess: A True Story of Life Behind the Veil in Saudi Arabia",
+    "Year": "2001"
+  }
+]
+```
+
+```
+GET: /276729/ratings/0446520802 获取用户276729对图书(ISBN:0446520802)的评价信息
+返回信息：
+
+[
+  {
+    "Count": 116,
+    "Rating": 1.4087434932956826,
+    "Author": "Nicholas Sparks",
+    "URL": "http://images.amazon.com/images/P/0446520802.01.THUMBZZZ.jpg",
+    "Publisher": "Warner Books",
+    "Title": "The Notebook",
+    "Year": "1996"
+  }
+]
+```
 ## 其他数据集推荐（参考https://gist.github.com/entaroadun/1653794）
 
 以下数据可以提供给初学者学习如何训练推荐算法模型

@@ -1,42 +1,15 @@
 # spark-book-recommender-system
 ## 项目简介
-* 基于Spark, Python Flask, 和[Book-Crossing Dataset](http://www2.informatik.uni-freiburg.de/~cziegler/BX/)的在线图书推荐系统。
+* 基于Spark, Python Flask, 和 [Book-Crossing Dataset](http://www2.informatik.uni-freiburg.de/~cziegler/BX/) 的在线图书推荐系统。
 * 该图书推荐系统参考https://github.com/jadianes/spark-movie-lens。
 * 修改数据处理部分，使其支持[Book-Crossing Dataset](http://www2.informatik.uni-freiburg.de/~cziegler/BX/)。
 * 适合初学者学习如何搭建一个推荐系统，本文底下附有其他数据，可供参考学习。
 
+## 基于模型的[协同过滤](https://xuefenghuang.github.io/collaborate-filter/)应用---图书推荐
+本文实现对用户推荐图书的简单应用。
+* 1. 推荐算法：
 
-## 协同过滤算法概述
-通常，协同过滤算法按照数据使用，可以分为：
-* 1. 基于用户（UserCF）---基于用户相似性
-
-基于用户的协同过滤，通过不同用户对物品的评分来评测用户之间的相似性，基于用户之间的相似性做出推荐。简单来讲，就是给用户推荐和他兴趣相似的其他用户喜欢的物品。
-
-![Image of UserCF](https://github.com/XuefengHuang/spark-book-recommender-system/blob/master/images/usercf.jpeg)
-
-上图示意出基于用户的协同过滤推荐机制的基本原理，假设用户 A 喜欢物品 A，物品 C，用户 B 喜欢物品 B，用户 C 喜欢物品 A ，物品 C 和物品 D；从这些用户的历史喜好信息中，我们可以发现用户 A 和用户 C 的口味和偏好是比较类似的，同时用户 C 还喜欢物品 D，那么我们可以推断用户 A 可能也喜欢物品 D，因此可以将物品 D 推荐给用户 A。
-
-* 2. 基于项目（ItemCF）---基于商品相似性
-
-基于项目的协同过滤，通过用户对不同item的评分来评测item之间的相似性，基于item之间的相似性做出推荐。简单来将，就是给用户推荐和他之前喜欢的物品相似的物品。
-
-![Image of ItemCF](https://github.com/XuefengHuang/spark-book-recommender-system/blob/master/images/itemcf.jpeg)
-
-上图示意出基于项目的协同过滤推荐机制的基本原理, 假设用户 A 喜欢物品 A 和物品 C，用户 B 喜欢物品 A，物品 B 和物品 C，用户 C 喜欢物品 A，从这些用户的历史喜好可以分析出物品 A 和物品 C 时比较类似的，喜欢物品 A 的人都喜欢物品 C，基于这个数据可以推断用户 C 很有可能也喜欢物品 C，所以系统会将物品 C 推荐给用户 C。
-
-* 3. 基于模型（ModelCF）
-
-基于模型的协同过滤推荐就是基于样本的用户喜好信息，训练一个推荐模型，然后根据实时的用户喜好的信息进行预测，计算推荐。
-
-基于模型的方法不像基于邻域的方法，使用用户项评分直接预测新的项。基于模型的方法会在使用评分去学习预测模型的基础上，去预测新项。一般的想法是使用机器学习算法建立用户和项的相互作用模型，从而找出数据中的模式。在一般情况下，基于模型的CF被认为是建立CF推荐系统的更先进的算法。有许多不同的算法可用于构建模型并基于这些模型进行预测，例如，贝叶斯网络、聚类、分类、回归、矩阵分解、受限玻尔兹曼机等等。这些技术在为了最终赢得Netflix奖的解决方案中扮演了关键角色。Netflix发起了一个竞赛，从2006年到2009年提供一百万美元奖金，颁发给产生的推荐比他们自己的推荐系统精确10%以上的推荐系统团队。成功获奖的解决方案是Netflix研发的一个集成（即混合）了超过100种算法模型，这些算法模型都采用了矩阵分解和受限玻尔兹曼机
-
-Spark MLlib当前支持基于模型的协同过滤，其中用户和商品通过一小组隐性因子进行表达，并且这些因子也用于预测缺失的元素。MLlib使用交替最小二乘法（ALS）来学习这些隐性因子。
-
-这种ALS算法不像基于用户或者基于物品的协同过滤算法一样，通过计算相似度来进行评分预测和推荐，而是通过矩阵分解的方法来进行预测用户对电影的评分。即如下图所示。
-
-![Image of ItemCF](https://github.com/XuefengHuang/spark-book-recommender-system/blob/master/images/ALS.jpeg)
-
-我们先通过例子来看一下基于模型的协同过滤在图书推荐中的应用：
+在我们的在线图书推荐系统中，我们借用Spark的ALS算法的训练和预测函数，每次收到新的数据后，将其更新到训练数据集中，然后更新ALS训练得到的模型。
 
 假设我们有一组用户，他们表现出了对一组图书的喜好。用户对一本图书的喜好程度越高，就会给其更高的评分，范围是从1到5。我们来通过一个矩阵来展示它，行代表用户，列代表图书。用户对图书的评分。所有的评分范围从1到5，5代表喜欢程度最高。第一个用户（行1）对第一个图书（列1）的评分是4。空的单元格代表用户未给图书评价。
 
@@ -46,10 +19,7 @@ Spark MLlib当前支持基于模型的协同过滤，其中用户和商品通过
 
 ![Image of Example1](https://github.com/XuefengHuang/spark-book-recommender-system/blob/master/images/example2.png)
 
-## 基于模型的协同过滤应用---图书推荐
-本文实现对用户推荐图书的简单应用。
-
-* 1. 数据描述：
+* 2. 数据描述：
 评分数据文件:
 
 `"User-ID";"ISBN";"Book-Rating"`
@@ -76,7 +46,7 @@ Spark MLlib当前支持基于模型的协同过滤，其中用户和商品通过
 "0393045218";"The Mummies of Urumchi";"E. J. W. Barber";"1999";"W. W. Norton &amp; Company";"http://images.amazon.com/images/P/0393045218.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0393045218.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0393045218.01.LZZZZZZZ.jpg"
 ```
 
-* 2. 数据处理细节：
+* 3. 数据处理细节：
 
 由于该数据中ISBN为string格式，spark的ALS默认product id为int格式，因此对该ISBN号进行计算hash处理并取前8位防止整数越界。详细代码如下：
 
@@ -98,7 +68,7 @@ books_RDD = books_raw_RDD.filter(lambda line: line!=books_raw_data_header)\
 books_titles_RDD = books_RDD.map(lambda x: (int(x[0]), x[1], x[2], x[3], x[4], x[5])).cache()
 ```
 
-* 3. 选择模型参数：
+* 4. 选择模型参数：
 ```
 from pyspark.mllib.recommendation import ALS
 import math
@@ -130,7 +100,7 @@ for rank in ranks:
 print 'The best model was trained with rank %s' % best_rank
 ```
 
-* 4. 模型保存
+* 5. 模型保存
 ```
 from pyspark.mllib.recommendation import MatrixFactorizationModel
 
@@ -141,21 +111,21 @@ model.save(sc, model_path)
 same_model = MatrixFactorizationModel.load(sc, model_path)
 ```
 
-* 5. 运行说明：
+* 6. 运行说明：
 ```
 virtualenv book
 pip install -r requirements.txt
 python server.py
 ```
 
-* 6. API:
+* 7. API:
 ```
 GET: /<int:user_id>/ratings/top/<int:count> 获取用户图书推荐top N信息
 GET: /<int:user_id>/ratings/<string:book_id> 获取该用户对某个图书的评价信息
 POST: /<int:user_id>/ratings 新增图书评价信息
 ```
 
-* 7. 接口调用示例：
+* 8. 接口调用示例：
 
 
 ```

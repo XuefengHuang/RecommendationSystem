@@ -35,17 +35,34 @@ Spark MLlib当前支持基于模型的协同过滤，其中用户和商品通过
 ![Image of Example1](https://github.com/XuefengHuang/spark-book-recommender-system/blob/master/images/example2.png)
 
 ## 基于模型的协同过滤应用---图书推荐
-* 1. 数据描述：
-
 本文实现对用户推荐图书的简单应用。
 
+* 1. 数据描述：
 评分数据文件:
 
 `"User-ID";"ISBN";"Book-Rating"`
 
+```
+"276725";"034545104X";"0"
+"276726";"0155061224";"5"
+"276727";"0446520802";"0"
+"276729";"052165615X";"3"
+"276729";"0521795028";"6"
+"276733";"2080674722";"0"
+"276736";"3257224281";"8"
+```
+
 图书数据文件:
 
 `"ISBN";"Book-Title";"Book-Author";"Year-Of-Publication";"Publisher";"Image-URL-S";"Image-URL-M";"Image-URL-L"`
+
+```
+"0195153448";"Classical Mythology";"Mark P. O. Morford";"2002";"Oxford University Press";"http://images.amazon.com/images/P/0195153448.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0195153448.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0195153448.01.LZZZZZZZ.jpg"
+"0002005018";"Clara Callan";"Richard Bruce Wright";"2001";"HarperFlamingo Canada";"http://images.amazon.com/images/P/0002005018.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0002005018.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0002005018.01.LZZZZZZZ.jpg"
+"0060973129";"Decision in Normandy";"Carlo D'Este";"1991";"HarperPerennial";"http://images.amazon.com/images/P/0060973129.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0060973129.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0060973129.01.LZZZZZZZ.jpg"
+"0374157065";"Flu: The Story of the Great Influenza Pandemic of 1918 and the Search for the Virus That Caused It";"Gina Bari Kolata";"1999";"Farrar Straus Giroux";"http://images.amazon.com/images/P/0374157065.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0374157065.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0374157065.01.LZZZZZZZ.jpg"
+"0393045218";"The Mummies of Urumchi";"E. J. W. Barber";"1999";"W. W. Norton &amp; Company";"http://images.amazon.com/images/P/0393045218.01.THUMBZZZ.jpg";"http://images.amazon.com/images/P/0393045218.01.MZZZZZZZ.jpg";"http://images.amazon.com/images/P/0393045218.01.LZZZZZZZ.jpg"
+```
 
 * 2. 数据处理细节：
 

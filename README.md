@@ -4,6 +4,7 @@
 * 该图书推荐系统参考https://github.com/jadianes/spark-movie-lens。
 * 修改数据处理部分，使其支持[Book-Crossing Dataset](http://www2.informatik.uni-freiburg.de/~cziegler/BX/)。
 * 适合初学者学习如何搭建一个推荐系统，本文底下附有其他数据，可供参考学习。
+* **如果觉得好，请给项目点颗星来支持吧～～**
 
 ## 基于模型的[协同过滤](https://xuefenghuang.github.io/collaborate-filter/)应用---图书推荐
 本文实现对用户推荐图书的简单应用。
